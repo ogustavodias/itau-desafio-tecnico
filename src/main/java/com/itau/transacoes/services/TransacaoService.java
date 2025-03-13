@@ -21,7 +21,12 @@ public class TransacaoService {
   public void registrarTransacao(Transacao transacao) {
     validarTransacao(transacao); // Se inválida, uma exceção será lançada
     transacoes.add(transacao);
-    logger.info("Transação registrada com sucesso");
+    logger.info("Transação registrada com sucesso: " + transacao);
+  }
+
+  public void deletarTransacoes() {
+    logger.info("Limpando todas as transações");
+    transacoes.clear();
   }
 
   public void validarTransacao(Transacao transacao) throws ResponseStatusException {
