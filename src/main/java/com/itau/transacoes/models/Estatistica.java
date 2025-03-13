@@ -8,6 +8,9 @@ import lombok.Getter;
 
 @Getter
 public class Estatistica {
+  private int count;
+  private Double sum;
+  private Double avg;
   private Double min;
   private Double max;
 
@@ -20,31 +23,32 @@ public class Estatistica {
 
   public static Estatistica obterEstatisticas(List<Transacao> transacoes) {
     Estatistica estatistica = new Estatistica(transacoes);
+    estatistica.calcCount();
+    estatistica.calcSum();
+    estatistica.calcAvg();
     estatistica.calcMin();
     estatistica.calcMax();
     return estatistica;
   }
 
+  private void calcCount() {
+    this.count = this.transacoes.size();
+  }
+
+  private void calcSum() {
+    this.sum = this.transacoes.stream().mapToDouble(Transacao::getValor).sum();
+  }
+
+  private void calcAvg() {
+    this.avg = this.transacoes.stream().mapToDouble(Transacao::getValor).average().orElse(0.0);
+  }
+
   private void calcMin() {
-    Double min = null;
-
-    for (Transacao transacao : this.transacoes) {
-      if (min == null || transacao.getValor() < min)
-        min = transacao.getValor();
-    }
-
-    this.min = min;
+    this.min = this.transacoes.stream().mapToDouble(Transacao::getValor).min().orElse(0.0);
   }
 
   private void calcMax() {
-    Double max = null;
-
-    for (Transacao transacao : this.transacoes) {
-      if (max == null || transacao.getValor() > max)
-        max = transacao.getValor();
-    }
-
-    this.max = max;
+    this.max = this.transacoes.stream().mapToDouble(Transacao::getValor).max().orElse(0.0);
   }
 
 }

@@ -1,5 +1,6 @@
 package com.itau.transacoes.services;
 
+import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.itau.transacoes.errors.UnprocessableEntityException;
+import com.itau.transacoes.models.Estatistica;
 import com.itau.transacoes.models.Transacao;
 
 @Service
@@ -22,6 +24,17 @@ public class TransacaoService {
     validarTransacao(transacao); // Se inválida, uma exceção será lançada
     transacoes.add(transacao);
     logger.info("Transação registrada com sucesso: " + transacao);
+  }
+
+  public Estatistica obterEstatisticaDasUltimasTransacoes(int segundos) {
+    List<Transacao> ultimasTransacoes = obterUltimasTransacoes(segundos);
+    return Estatistica.obterEstatisticas(ultimasTransacoes);
+  }
+
+  public List<Transacao> obterUltimasTransacoes(int segundos) {
+    logger.info("Buscando transações dos últimos {} segundos", segundos);
+    OffsetDateTime agora = OffsetDateTime.now();
+    return transacoes.stream().filter(t -> Duration.between(t.getDataHora(), agora).getSeconds() <= segundos).toList();
   }
 
   public void deletarTransacoes() {
